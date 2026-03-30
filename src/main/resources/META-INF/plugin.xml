@@ -1,0 +1,48 @@
+<!-- Plugin Configuration File: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <!-- Unique identifier of the plugin. It should be FQN, cannot be changed between the plugin versions. -->
+    <id>dev.sergboec.projectTreeMarker</id>
+
+    <!-- Public plugin name should be written in Title Case.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/best-practices-for-listing.html#plugin-name -->
+    <name>ProjectTreeMarker</name>
+
+    <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
+    <vendor url="https://www.yourcompany.com">YourCompany</vendor>
+
+    <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/best-practices-for-listing.html#plugin-description -->
+    <description><![CDATA[
+        A plugin that allows users to mark files in the Project View with a badge icon overlay.
+        Useful for highlighting important files temporarily.
+        Right-click on any file or directory and select "Mark/Unmark File" to toggle the mark.
+    ]]></description>
+
+    <!-- Product and plugin compatibility requirements.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
+    <depends>com.intellij.modules.platform</depends>
+
+    <resource-bundle>messages.MyMessageBundle</resource-bundle>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <projectViewNodeDecorator implementation="dev.sergboec.projecttreemarker.MarkedFileNodeDecorator"/>
+        <postStartupActivity implementation="dev.sergboec.projecttreemarker.MarkedFilesVfsListener"/>
+    </extensions>
+
+    <actions>
+        <action id="dev.sergboec.projecttreemarker.ToggleMarkAction"
+                class="dev.sergboec.projecttreemarker.ToggleMarkAction"
+                text="Toggle File Mark"
+                description="Marks or unmarks the selected file in the project tree">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="alt shift M"/>
+        </action>
+        <action id="dev.sergboec.projecttreemarker.ClearAllMarksAction"
+                class="dev.sergboec.projecttreemarker.ClearAllMarksAction"
+                text="Clear All File Marks"
+                description="Removes all file marks from the project tree">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+        </action>
+    </actions>
+</idea-plugin>
