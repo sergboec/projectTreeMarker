@@ -7,6 +7,8 @@
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/best-practices-for-listing.html#plugin-name -->
     <name>File Marker</name>
 
+    <vendor>Sergei Boitsov</vendor>
+
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
     <vendor url="https://github.com/sergboec">sergboec</vendor>
 
