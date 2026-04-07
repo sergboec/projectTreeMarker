@@ -11,6 +11,7 @@ class MarkedFilesSettings : PersistentStateComponent<MarkedFilesSettings.State> 
     class State {
         var lightColorHex: String = "FFE4AD"
         var darkColorHex: String = "52423D"
+        var defaultMarkColor: String = MarkColor.DEFAULT.name
     }
 
     private var myState = State()

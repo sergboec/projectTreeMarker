@@ -5,31 +5,47 @@ import com.intellij.openapi.options.BoundConfigurable
 import com.intellij.openapi.project.Project
 import com.intellij.ui.dsl.builder.*
 
-class MarkedFilesConfigurable(private val project: Project) : BoundConfigurable("Project Tree Marker") {
+class MarkedFilesConfigurable(private val project: Project) :
+    BoundConfigurable(MyMessageBundle.message("configurable.display.name")) {
 
     private var lightColorHex: String = ""
     private var darkColorHex: String = ""
+    private var defaultMarkColor: MarkColor = MarkColor.DEFAULT
 
     override fun createPanel() = panel {
         val settings = project.service<MarkedFilesSettings>()
         lightColorHex = settings.state.lightColorHex
         darkColorHex = settings.state.darkColorHex
+        defaultMarkColor = try {
+            MarkColor.valueOf(settings.state.defaultMarkColor)
+        } catch (_: IllegalArgumentException) {
+            MarkColor.DEFAULT
+        }
 
-        group("Mark Highlight Colors") {
-            row("Light theme color (hex):") {
+        group(MyMessageBundle.message("settings.default.color.group.title")) {
+            row(MyMessageBundle.message("settings.default.color.label")) {
+                comboBox(MarkColor.entries.toList(), com.intellij.ui.SimpleListCellRenderer.create { label, value, _ ->
+                    label.text = value?.displayName ?: ""
+                })
+                    .bindItem(::defaultMarkColor.toNullableProperty())
+            }
+        }
+
+        group(MyMessageBundle.message("settings.group.title")) {
+            row(MyMessageBundle.message("settings.light.color.label")) {
                 textField()
                     .columns(8)
                     .bindText(::lightColorHex)
                     .validationOnInput {
-                        if (!isValidHex(it.text)) error("Invalid hex color (e.g. FFE4AD)") else null
+                        if (!isValidHex(it.text)) error(MyMessageBundle.message("settings.invalid.hex.error", "FFE4AD")) else null
                     }
             }
-            row("Dark theme color (hex):") {
+            row(MyMessageBundle.message("settings.dark.color.label")) {
                 textField()
                     .columns(8)
                     .bindText(::darkColorHex)
                     .validationOnInput {
-                        if (!isValidHex(it.text)) error("Invalid hex color (e.g. 52423D)") else null
+                        if (!isValidHex(it.text)) error(MyMessageBundle.message("settings.invalid.hex.error", "52423D")) else null
                     }
             }
         }
@@ -40,17 +56,23 @@ class MarkedFilesConfigurable(private val project: Project) : BoundConfigurable(
         val settings = project.service<MarkedFilesSettings>()
         settings.state.lightColorHex = lightColorHex
         settings.state.darkColorHex = darkColorHex
+        settings.state.defaultMarkColor = defaultMarkColor.name
     }
 
     override fun isModified(): Boolean {
         val settings = project.service<MarkedFilesSettings>()
-        return lightColorHex != settings.state.lightColorHex || darkColorHex != settings.state.darkColorHex
+        return super.isModified() || lightColorHex != settings.state.lightColorHex || darkColorHex != settings.state.darkColorHex || defaultMarkColor.name != settings.state.defaultMarkColor
     }
 
     override fun reset() {
         val settings = project.service<MarkedFilesSettings>()
         lightColorHex = settings.state.lightColorHex
         darkColorHex = settings.state.darkColorHex
+        defaultMarkColor = try {
+            MarkColor.valueOf(settings.state.defaultMarkColor)
+        } catch (_: IllegalArgumentException) {
+            MarkColor.DEFAULT
+        }
         super.reset()
     }
 

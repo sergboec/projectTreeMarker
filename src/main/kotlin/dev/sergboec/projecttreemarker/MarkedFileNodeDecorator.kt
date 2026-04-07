@@ -14,10 +14,11 @@ class MarkedFileNodeDecorator : ProjectViewNodeDecorator {
         val service = project.service<MarkedFilesService>()
         if (!service.isMarked(virtualFile)) return
 
+        val color = service.getMarkColor(virtualFile)
         val baseIcon = data.getIcon(false) ?: return
         val layered = LayeredIcon(2)
         layered.setIcon(baseIcon, 0)
-        layered.setIcon(MarkerIcons.MarkBadge, 1)
+        layered.setIcon(MarkerIcons.forColor(color), 1)
         data.setIcon(layered)
     }
 }

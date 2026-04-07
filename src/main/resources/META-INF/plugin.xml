@@ -5,17 +5,29 @@
 
     <!-- Public plugin name should be written in Title Case.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/best-practices-for-listing.html#plugin-name -->
-    <name>ProjectTreeMarker</name>
+    <name>File Marker</name>
 
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
-    <vendor url="https://www.yourcompany.com">YourCompany</vendor>
+    <vendor url="https://github.com/sergboec">sergboec</vendor>
 
     <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/best-practices-for-listing.html#plugin-description -->
     <description><![CDATA[
-        A plugin that allows users to mark files in the Project View with a badge icon overlay.
-        Useful for highlighting important files temporarily.
-        Right-click on any file or directory and select "Mark/Unmark File" to toggle the mark.
+        <p>Mark and highlight files and directories in the Project View with colored badge overlays.</p>
+
+        <h3>Features</h3>
+        <ul>
+            <li>Toggle file marks with a single action or keyboard shortcut (<b>Alt+Shift+M</b>)</li>
+            <li>Choose from multiple mark colors (Default, Pink, Yellow, Dark Blue)</li>
+            <li>Customize highlight colors for light and dark themes in Settings</li>
+            <li>Marks persist across IDE restarts</li>
+            <li>Automatically updates marks when files are moved or renamed</li>
+            <li>Clear all marks at once when needed</li>
+        </ul>
+
+        <h3>Usage</h3>
+        <p>Right-click any file or directory in the Project View and use the <b>File Marker</b> submenu
+        to toggle marks, choose a color, or clear all marks.</p>
     ]]></description>
 
     <!-- Product and plugin compatibility requirements.
@@ -27,21 +39,40 @@
     <extensions defaultExtensionNs="com.intellij">
         <projectViewNodeDecorator implementation="dev.sergboec.projecttreemarker.MarkedFileNodeDecorator"/>
         <postStartupActivity implementation="dev.sergboec.projecttreemarker.MarkedFilesVfsListener"/>
+        <projectConfigurable
+                instance="dev.sergboec.projecttreemarker.MarkedFilesConfigurable"
+                id="dev.sergboec.projecttreemarker.MarkedFilesConfigurable"
+                displayName="File Marker"
+                parentId="tools"/>
     </extensions>
 
     <actions>
-        <action id="dev.sergboec.projecttreemarker.ToggleMarkAction"
-                class="dev.sergboec.projecttreemarker.ToggleMarkAction"
-                text="Toggle File Mark"
-                description="Marks or unmarks the selected file in the project tree">
+        <group id="dev.sergboec.projecttreemarker.ProjectTreeMarkerGroup"
+               text="File Marker"
+               description="File Marker actions"
+               popup="true">
             <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
-            <keyboard-shortcut keymap="$default" first-keystroke="alt shift M"/>
-        </action>
-        <action id="dev.sergboec.projecttreemarker.ClearAllMarksAction"
+            <action id="dev.sergboec.projecttreemarker.ToggleMarkAction"
+                    class="dev.sergboec.projecttreemarker.ToggleMarkAction"
+                    text="Toggle File Mark"
+                    description="Marks or unmarks the selected file in the project tree">
+                <keyboard-shortcut keymap="$default" first-keystroke="alt shift M"/>
+            </action>
+            <group id="dev.sergboec.projecttreemarker.MarkWithColorGroup"
+                   class="dev.sergboec.projecttreemarker.MarkWithColorGroup"
+                   text="Mark with Color"
+                   description="Mark selected files with a specific color"
+                   popup="true"/>
+            <separator/>
+            <action id="dev.sergboec.projecttreemarker.ClearAllMarksAction"
+                    class="dev.sergboec.projecttreemarker.ClearAllMarksAction"
+                    text="Clear All File Marks"
+                    description="Removes all file marks from the project tree"/>
+        </group>
+        <action id="dev.sergboec.projecttreemarker.ClearAllMarksAction.ToolsMenu"
                 class="dev.sergboec.projecttreemarker.ClearAllMarksAction"
                 text="Clear All File Marks"
                 description="Removes all file marks from the project tree">
-            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
             <add-to-group group-id="ToolsMenu" anchor="last"/>
         </action>
     </actions>
